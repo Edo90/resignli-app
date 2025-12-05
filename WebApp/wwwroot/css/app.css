@@ -101,3 +101,9 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+
+.login-container {
+    max-width:300px;
+    margin: 50px auto;
+    text-align: center;
+} 

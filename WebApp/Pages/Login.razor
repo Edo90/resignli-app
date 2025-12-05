@@ -1,0 +1,44 @@
+﻿@using WebApp.Clients
+
+@page "/login"
+@inject AuthClient Auth
+@inject NavigationManager Nav
+
+<h3>Login</h3>
+
+<div class="login-container">
+    <input @bind="username" type="text" placeholder="Username"   />
+    <br />
+
+    
+    <input @bind="password" type="password" placeholder="Password" />
+    <br />
+
+    <button @onclick="LoginUser" class="btn btn-primary">Login</button>
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <p style="color:red">@ErrorMessage</p>
+    }
+
+</div>
+
+@code {
+    private string username = string.Empty;
+    private string password = string.Empty;
+    private string ErrorMessage = string.Empty;
+
+    private async Task LoginUser()
+    {
+        var success = await Auth.LoginAsync(username, password);
+
+        if (!success)
+        {
+            ErrorMessage = "Invalid username or password";
+            return;
+        }
+
+        Nav.NavigateTo("/users");
+    }
+
+}

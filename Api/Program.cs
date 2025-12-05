@@ -75,7 +75,21 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(databaseSettings.Name);
 builder.Services.AddAutoMapper(typeof(ApiMappingProfile));
 
+var ALLOW_ORIGINS = "AllowedOrigins";
+
+builder.Services.AddCors(opts =>
+{
+	opts.AddPolicy(ALLOW_ORIGINS, policiy =>
+	{
+		policiy.WithOrigins("http://localhost:5283") //TOREMEMBER: This is the port where the webapp is running be sure to change it
+		.AllowAnyMethod()
+		.AllowAnyHeader();
+	});
+});
+
 var app = builder.Build();
+
+app.UseCors(ALLOW_ORIGINS);
 
 //seeding the database
 using(var scope = app.Services.CreateScope())

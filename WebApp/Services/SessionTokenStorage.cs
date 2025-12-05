@@ -24,7 +24,7 @@ namespace WebApp.Services
 
 		public Task SaveTokenAsync(string token)
 		{
-			return _js.InvokeVoidAsync("sessionStorage.setItem", "jwt").AsTask();
+			return _js.InvokeVoidAsync("sessionStorage.setItem", "jwt",token).AsTask();
 		}
 	}
 }

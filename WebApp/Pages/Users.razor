@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using WebApp.Dtos
+
+@page "/users"
+@attribute [Authorize]
+@inject IHttpClientFactory httpClientFactory
+
+
+@if(users == null)
+{
+    <p>...Loading...</p>
+}else if(users.Count == 0)
+{
+    <p>No Users</p>
+}
+else
+{
+    <ul>
+        @foreach (var user in users)
+        {
+            <li>@user.Username with [@user.Role]</li>
+        }
+    </ul>
+}
+
+<h3>Users</h3>
+
+    @code {
+    private List<UserDto> users;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var client = httpClientFactory.CreateClient("ApiClient");
+
+        try
+        {
+            users = await client.GetFromJsonAsync<List<UserDto>>("api/users");
+        }
+        catch (Exception ex)
+        {
+
+            Console.WriteLine($"Error loading users: {ex.Message}");
+            users = new List<UserDto>();
+        }
+    }  
+}

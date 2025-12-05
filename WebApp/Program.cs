@@ -22,7 +22,7 @@ builder.Services.AddTransient<AuthHttpClientHeader>();
 
 builder.Services.AddHttpClient("ApiClient", cl =>
 {
-	cl.BaseAddress = new Uri("http://localhost:5117/"); //TOREMEMBER: This must be change to Api current port.
+	cl.BaseAddress = new Uri("http://localhost:5177/"); //TOREMEMBER: This must be change to Api current port.
 }).AddHttpMessageHandler<AuthHttpClientHeader>();
 
 builder.Services.AddScoped<AuthClient>();
