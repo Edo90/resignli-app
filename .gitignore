@@ -15,3 +15,5 @@
 /Tests/obj
 /Web/bin/Debug/net7.0
 /Web/obj
+/WebApp/bin/Debug/net8.0
+/WebApp/obj
