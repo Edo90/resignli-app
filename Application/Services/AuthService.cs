@@ -1,49 +1,51 @@
 ﻿using Application.Dtos;
 using Application.Settings;
-using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.WebSockets;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+using System.Security.Claims;
 using System.Text;
 
 namespace Application.Services
 {
 	public class AuthService
 	{
-		IUserRepository _userInterface;
+		IUserRepository _userRepository;
 		private JwtSettings _jwtOptions;
 
-		public AuthService(IUserRepository userInterface, IOptions<JwtSettings> jwtOptions)
+		public AuthService(IUserRepository userRepository, IOptions<JwtSettings> jwtOptions)
 		{
-			_userInterface = userInterface;
+			_userRepository = userRepository;
 			_jwtOptions = jwtOptions.Value;
 		}
 
-		//public async Task<LoginResponse?> LoginAsync(LoginRequest loginRequest)
-		//{
-		//	//show check for user and generate token
+		public async Task<JwtToken?> LoginAsync(string username, string password)
+		{
+			var user = await _userRepository.GetByUserNameAsync(username);
 
-		//	var user = await _userInterface.GetByUserName(loginRequest.Username);
+			if (user is null || user.Password != password) return null;
 
-		//	if (user is null || user.Password != loginRequest.Password) return null;
+			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
+			var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-		//	var token = GenerateJwtToken(user);
-		//}
+			var expiresAt = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes);
 
-		//private JwtToken GenerateJwtToken(UserApp user)
-		//{
-		//	var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
-		//	var token = new JwtSecurityToken(issuer: _jwtOptions.Issuer, audience: _jwtOptions.Audience, expires: DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes));
-		//}
-	}
+			var token = new JwtSecurityToken(
+				issuer: _jwtOptions.Issuer,
+				audience: _jwtOptions.Audience,
+				expires: expiresAt,
+				signingCredentials: credentials,
+				claims: new[]
+				{
+					new Claim(ClaimTypes.Name, user.Username),
+					new Claim(ClaimTypes.Role, user.Role!)
+				}
+				);
 
-	record JwtToken
-	{
-		string token;
-		string expiresAt;
+			var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+			return new JwtToken(jwt,expiresAt);
+		}
 	}
 }

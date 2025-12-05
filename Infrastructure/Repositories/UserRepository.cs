@@ -13,7 +13,7 @@ namespace Infrastructure.Repositories
 			_context = db;
 		}
 
-		public async Task<UserApp?> GetByUserName(string username)
+		public async Task<UserApp?> GetByUserNameAsync(string username)
 		{
 			return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
 		}

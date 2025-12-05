@@ -18,6 +18,8 @@ namespace Infrastructure.Repositories
 
 		public async Task<T> AddAsync(T entity)
 		{
+			entity.UpdatedAt = DateTime.UtcNow;
+			entity.CreatedAt = DateTime.UtcNow;
 			await _db.Set<T>().AddAsync(entity);
 			await _db.SaveChangesAsync();
 			return entity;
@@ -45,6 +47,7 @@ namespace Infrastructure.Repositories
 
 		public async Task<bool> UpdateAsync(T entity)
 		{
+			entity.UpdatedAt = DateTime.UtcNow;
 			_db.Set<T>().Update(entity);
 			await _db.SaveChangesAsync();
 			return true;
