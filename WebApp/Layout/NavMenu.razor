@@ -1,5 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
+@using WebApp.Clients
+
 @inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+@inject AuthClient AuthClient
+
 
 
 <div class="top-row ps-3 navbar navbar-dark">
@@ -26,6 +31,11 @@
 
         @if (isAuthenticated)
         {
+            <div class="nav-item px-3">
+                <a class="nav-link" href="#" @onclick="Logout">
+                    <span class="bi bi-box-arrow-left"></span> Logout
+                </a>
+            </div>
             <!-- Protected menu items -->
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/users">
@@ -47,11 +57,24 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
+    private async Task Logout()
+    {
+        await AuthClient.LogoutAsync();
+        Nav.NavigateTo("/login", forceLoad: true);
+    }
+
     private bool isAuthenticated;
 
     protected async override Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
+
+        AuthStateProvider.AuthenticationStateChanged += async (task) =>
+        {
+            var newState = await task;
+            isAuthenticated = newState.User.Identity?.IsAuthenticated ?? false;
+            StateHasChanged();
+        };
     }
 }

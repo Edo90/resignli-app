@@ -28,5 +28,10 @@ namespace WebApp.Clients
 			await _authProvider.MarkUserAsAuthenticated(result.Token);
 			return true;
 		}
+
+		public async Task LogoutAsync()
+		{
+			await _authProvider.MarUserAsLoggedOut();
+		}
 	}
 }
