@@ -1,0 +1,81 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using WebApp.Clients
+@using WebApp.Dtos
+
+@page "/employees"
+
+@attribute [Authorize]
+
+@inject EmployeeClient EmployeeClient
+@inject NavigationManager Nav
+
+<h3>Employees</h3>
+
+<button class="btn btn-primary mb-3"
+        @onclick='@(() => Nav.NavigateTo("/employees/add"))'>
+    Add
+</button>
+
+@if(employees == null)
+{
+    <p>Loading</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Identity #</th>
+                <th>Birthdate #</th>
+                <th>Email #</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in employees)
+            {
+                <tr>
+                    <td>@employee.Name</td>
+                    <td>@employee.Birthdate.ToString("dd/MM/yyyy")</td>
+                    <td>@employee.IdentityNumber</td>
+                    <td>@employee.Email</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning"
+                                @onclick='@(() => Edit(employee.Id))'>
+                            Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger"
+                                @onclick='@(() => Delete(employee.Id))'>
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    List<EmployeeDto>? employees;
+
+    protected async override Task OnInitializedAsync()
+    {
+        employees = await EmployeeClient.GetAllAsync();
+    }
+
+    void Edit(int id)
+    {
+        Nav.NavigateTo($"/employees/edit/{id}");
+    }
+
+    async Task Delete(int id)
+    {
+        var isDeleted = await EmployeeClient.DeleteAsync(id);
+
+        if (isDeleted)
+        {
+            employees = await EmployeeClient.GetAllAsync();
+            StateHasChanged();
+        }
+    }
+}

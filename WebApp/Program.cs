@@ -26,5 +26,6 @@ builder.Services.AddHttpClient("ApiClient", cl =>
 }).AddHttpMessageHandler<AuthHttpClientHeader>();
 
 builder.Services.AddScoped<AuthClient>();
+builder.Services.AddScoped<EmployeeClient>();
 
 await builder.Build().RunAsync();

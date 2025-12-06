@@ -10,7 +10,7 @@ namespace Api.Mapping
 		public ApiMappingProfile()
 		{
 			CreateMap<Employee, EmployeeDto>()
-				.ForMember(dest => dest.LastUpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
+				.ForMember(dest => dest.LastUpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt)).ReverseMap();
 
 			CreateMap<CreateEmployeeDto, Employee>();
 			CreateMap<UpdateEmployeeDto, Employee>()

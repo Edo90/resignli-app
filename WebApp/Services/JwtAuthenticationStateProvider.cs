@@ -17,10 +17,26 @@ namespace WebApp.Services
 		{
 			var token = await _tokenStorage.GetTokenAsync();
 
-			if (string.IsNullOrWhiteSpace(token)) return new AuthenticationState(new System.Security.Claims.ClaimsPrincipal(new ClaimsIdentity()));
+			if (string.IsNullOrWhiteSpace(token)) return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
 			var handler = new JwtSecurityTokenHandler();
-			var jwt = handler.ReadJwtToken(token);
+
+			JwtSecurityToken jwt;
+
+			try {
+			jwt = handler.ReadJwtToken(token);
+
+			}
+			catch
+			{
+				await MarUserAsLoggedOut();
+				return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+			}
+
+			if (jwt.ValidTo < DateTime.UtcNow) {
+				await MarUserAsLoggedOut();
+				return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+			}
 
 			var identity = new ClaimsIdentity(jwt.Claims, "jwt");
 			var user = new ClaimsPrincipal(identity);
