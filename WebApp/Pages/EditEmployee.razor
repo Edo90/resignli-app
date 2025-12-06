@@ -47,8 +47,8 @@ else
             <InputText class="form-control" @bind-Value="employee.Email" />
         </div>
 
-        <buttton class="btn btn-primary">Save</buttton>
-        <buttton class="btn btn-secondary">Cancel</buttton>
+        <button class="btn btn-primary" type="submit">Save</button>
+        <button class="btn btn-secondary" type="button" @onclick="Cancel">Cancel</button>
     </EditForm>
 
     @if (!string.IsNullOrEmpty(Message))
@@ -60,9 +60,15 @@ else
 @code {
     [Parameter] public int id{ get; set; }
 
-    bool loading = false;
+    bool loading = true;
     EmployeeDto? employee;
     string Message = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        employee = await EmployeeClient.GetByIdAsync(id);
+        loading = false;
+    }
 
     async Task Save()
     {

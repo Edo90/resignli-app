@@ -22,7 +22,7 @@
 
     <div class="mb-3">
         <label>Birthdate</label>
-        <InputDate class="form-control" @bind-Value="employee.Birthdate" />
+        <InputDate class="form-control" @bind-Value="employee.Birthdate" min="1900-01-01" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
     </div>
 
     <div class="mb-3">
@@ -35,8 +35,8 @@
         <InputText class="form-control" @bind-Value="employee.Email" />
     </div>
 
-    <buttton class="btn btn-primary">Save</buttton>
-    <buttton class="btn btn-secondary">Cancel</buttton>
+    <button class="btn btn-primary" type="submit">Save</button>
+    <button class="btn btn-secondary" type="button" @onclick="Cancel">Cancel</button>
 </EditForm>
 
 @if (!string.IsNullOrEmpty(Message))
@@ -45,7 +45,10 @@
 }
 
 @code {
-    EmployeeDto employee = new();
+    EmployeeDto employee = new()
+    {
+        Birthdate = DateTime.Now
+    };
     string Message = string.Empty;
 
     async Task Save()

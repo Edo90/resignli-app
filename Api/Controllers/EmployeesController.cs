@@ -2,12 +2,14 @@
 using Application.Services;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	public class EmployeesController : ControllerBase
 	{
 		private readonly EmployeeService _employeeService;
@@ -29,7 +31,7 @@ namespace Api.Controllers
 			return Ok(dtos);
 		}
 
-		[HttpGet("id:int")]
+		[HttpGet("{id:int}")]
 		public async Task<IActionResult> GetById(int id)
 		{
 			var employee = await _employeeService.GetByIdAsync(id);
@@ -50,7 +52,7 @@ namespace Api.Controllers
 			return CreatedAtAction(nameof(GetById), new {id= created.Id}, result);
 		}
 
-		[HttpPut]
+		[HttpPut("{id:int}")]
 		public async Task<IActionResult> Update(int id, UpdateEmployeeDto dto)
 		{
 			var employee = await _employeeService.GetByIdAsync(id);
@@ -64,7 +66,7 @@ namespace Api.Controllers
 			return updated ? NoContent() : BadRequest(); 
 		}
 
-		[HttpDelete]
+		[HttpDelete("{id:int}")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			var isDeleted = await _employeeService.DeleteAsync(id);

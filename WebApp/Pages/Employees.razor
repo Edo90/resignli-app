@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @using WebApp.Clients
 @using WebApp.Dtos
+@using WebApp.Components
 
 @page "/employees"
 
@@ -47,16 +48,19 @@ else
                         </button>
                         <button class="btn btn-sm btn-danger"
                                 @onclick='@(() => Delete(employee.Id))'>
-                            Edit
+                            Delete
                         </button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    <ConfirmDelete @ref="confirmDeleteDialog" OnConfirm="PerformDelete" OnCancel="CancelDelete"></ConfirmDelete>
 }
 @code {
     List<EmployeeDto>? employees;
+    ConfirmDelete? confirmDeleteDialog;
+    int employeIdToDelete = 0;
 
     protected async override Task OnInitializedAsync()
     {
@@ -70,12 +74,23 @@ else
 
     async Task Delete(int id)
     {
-        var isDeleted = await EmployeeClient.DeleteAsync(id);
+        employeIdToDelete = id;
+        confirmDeleteDialog?.Open();
+    }
+
+    async Task PerformDelete()
+    {
+        var isDeleted = await EmployeeClient.DeleteAsync(employeIdToDelete);
 
         if (isDeleted)
         {
             employees = await EmployeeClient.GetAllAsync();
             StateHasChanged();
         }
+    }
+
+    Task CancelDelete()
+    {
+        return Task.CompletedTask;
     }
 }

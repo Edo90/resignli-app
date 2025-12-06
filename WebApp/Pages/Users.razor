@@ -6,6 +6,7 @@
 @inject IHttpClientFactory httpClientFactory
 
 
+<h3>Users</h3>
 @if(users == null)
 {
     <p>...Loading...</p>
@@ -23,7 +24,7 @@ else
     </ul>
 }
 
-<h3>Users</h3>
+
 
     @code {
     private List<UserDto> users;
