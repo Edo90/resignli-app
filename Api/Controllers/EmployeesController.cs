@@ -1,9 +1,11 @@
 ﻿using Api.Dtos;
+using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Api.Controllers
 {
@@ -12,10 +14,10 @@ namespace Api.Controllers
 	[Authorize]
 	public class EmployeesController : ControllerBase
 	{
-		private readonly EmployeeService _employeeService;
+		private readonly IEmployeeService _employeeService;
 		private readonly IMapper _mapper;
 
-		public EmployeesController(EmployeeService employeeService, IMapper mapper)
+		public EmployeesController(IEmployeeService employeeService, IMapper mapper)
 		{
 			_employeeService = employeeService;
 			_mapper = mapper;
@@ -35,6 +37,9 @@ namespace Api.Controllers
 		public async Task<IActionResult> GetById(int id)
 		{
 			var employee = await _employeeService.GetByIdAsync(id);
+
+			if (employee is null)
+				return NotFound();
 
 			var dto = _mapper.Map<EmployeeDto>(employee);
 			return Ok(dto);

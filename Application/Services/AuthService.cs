@@ -1,4 +1,5 @@
 ﻿using Application.Dtos;
+using Application.Interfaces;
 using Application.Settings;
 using Domain.Interfaces;
 using Microsoft.Extensions.Options;
@@ -9,7 +10,7 @@ using System.Text;
 
 namespace Application.Services
 {
-	public class AuthService
+	public class AuthService : IAuthService
 	{
 		IUserRepository _userRepository;
 		private JwtSettings _jwtOptions;

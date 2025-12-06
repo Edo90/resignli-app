@@ -1,4 +1,5 @@
 ﻿using Api.Dtos;
+using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +10,11 @@ namespace Api.Controllers
 	[ApiController]
 	public class AuthController : ControllerBase
 	{
-		private readonly AuthService _authService;
-		private readonly IMapper _mapper;
-
-		public AuthController(AuthService authService, IMapper mapper)
+		private readonly IAuthService _authService;
+		
+		public AuthController(IAuthService authService)
 		{
 			_authService = authService;
-			_mapper = mapper;
 		}
 
 		[HttpPost("login")]
