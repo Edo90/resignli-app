@@ -110,24 +110,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-////this is just for testing
-//app.MapGet("test/employees", async (AppDbContext db) =>
-//{
-//	var users = await db.Employees.ToListAsync();
-//	return Results.Ok(users);
-//});
-
-//app.MapGet("test/users", async (AppDbContext db) =>
-//{
-//	var employees = await db.Users.ToListAsync();
-//	return Results.Ok(employees);
-//});
-
-//app.MapGet("test/repo/employees", async (IEmployeeRepository repo) =>
-//{
-//	var employee = new Employee { IdentityNumber = "123", Name = "testrepo", Birthdate = new DateTime(), Email = "test@test.com" };
-
-//	var createdEmployee = await repo.AddAsync(employee);
-//	return Results.Ok(createdEmployee);
-//});
 app.Run();
