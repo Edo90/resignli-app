@@ -47,10 +47,11 @@
         var uri = Nav.ToAbsoluteUri(Nav.Uri);
         var query = QueryHelpers.ParseQuery(uri.Query);
 
-        if(query.TryGetValue("expired", out var expired))
+        if (query.TryGetValue("expired", out var expired) && expired == "true")
         {
             ErrorMessage = "Your session expired, Please log in again";
         }
+
         base.OnInitialized();
     }
 }
