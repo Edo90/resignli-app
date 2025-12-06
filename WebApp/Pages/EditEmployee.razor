@@ -1,0 +1,82 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using WebApp.Clients
+@using WebApp.Dtos
+
+@page "/employees/edit/{id:int}"
+
+@attribute [Authorize]
+
+@inject EmployeeClient EmployeeClient
+@inject NavigationManager Nav
+
+
+<h3>Edit</h3>
+
+@if (loading)
+{
+    <p>Looking for employee...</p>
+}else if(employee == null)
+{
+    <div class="alert alert-danger">
+        Employee Not Found
+    </div>
+}
+else
+{
+    <EditForm Model="@employee" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Name</label>
+            <InputText class="form-control" @bind-Value="employee.Name" />
+        </div>
+
+        <div class="mb-3">
+            <label>Birthdate</label>
+            <InputDate class="form-control" @bind-Value="employee.Birthdate" />
+        </div>
+
+        <div class="mb-3">
+            <label>Identity #</label>
+            <InputText class="form-control" @bind-Value="employee.IdentityNumber" />
+        </div>
+
+        <div class="mb-3">
+            <label>Email</label>
+            <InputText class="form-control" @bind-Value="employee.Email" />
+        </div>
+
+        <buttton class="btn btn-primary">Save</buttton>
+        <buttton class="btn btn-secondary">Cancel</buttton>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <div class="alert alert-info mt-3">@Message</div>
+    }
+}
+
+@code {
+    [Parameter] public int id{ get; set; }
+
+    bool loading = false;
+    EmployeeDto? employee;
+    string Message = string.Empty;
+
+    async Task Save()
+    {
+        if(employee != null)
+        {
+            var isUpdated = await EmployeeClient.UpdateAsync(id, employee);
+
+            if (isUpdated) Nav.NavigateTo("/employees");
+            else Message = "Error while updating employee";
+        }
+    }
+
+    void Cancel()
+    {
+        Nav.NavigateTo("/employees");
+    }
+}
